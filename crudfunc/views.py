@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 
 from .models import Item
 from .forms import ItemForm
@@ -27,15 +27,16 @@ def item_list(request):
 #UPDATE VIEW
 
 def update_item(request, id):
-    item = Item.objects.get(id=id)
-    if request.method == 'POST':
+    item = get_object_or_404(Item, pk=id)
+    if request.method == "POST":
         form = ItemForm(request.POST, instance=item)
         if form.is_valid():
             form.save()
             return redirect('item_list')
     else:
-        form = ItemForm(instance=form)
-    return render(request, 'update_item.html'), {'item':item}    
+        form = ItemForm(instance=item)  # Define form for GET requests
+    
+    return render(request, 'update_item.html', {'form': form})
 
 
 #DELETE VIEW
